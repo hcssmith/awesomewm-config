@@ -14,6 +14,7 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
+local battery_widget = require("battery-widget")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -139,12 +140,6 @@ awful.screen.connect_for_each_screen(function(s)
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(gears.table.join(
-                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
-                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
@@ -173,10 +168,28 @@ awful.screen.connect_for_each_screen(function(s)
         },
         s.sep, -- Middle widget
         { -- Right widgets
-            layout = wibox.layout.fixed.horizontal,
-            wibox.widget.systray(),
-            mytextclock,
+        layout = wibox.layout.fixed.horizontal,
+        wibox.widget.systray(),
+        battery_widget {
+          -- Show different prefixes when charging on AC
+          ac_prefix = {
+            { 25, "not charged" },
+            { 50, "1/4 charged" },
+            { 75, "2/4 charged" },
+            { 95, "3/4 charged" },
+            {100, "fully charged" },
+          },
+
+          -- Show a visual indicator of charge level when on battery power
+          battery_prefix = {
+            { 25, "[#---] "},
+            { 50, "[##--] "},
+            { 75, "[###-] "},
+            {100, "[####] "},
+          }
         },
+        mytextclock,
+      },
     }
 end)
 -- }}}
