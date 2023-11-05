@@ -51,6 +51,13 @@ beautiful.init(gears.filesystem.get_themes_dir() .. "xresources/theme.lua")
 beautiful.wallpaper = '/home/hcssmith/Pictures/Wallpapers/sunset-ocean.jpg'
 beautiful.useless_gap = 10
 
+volumecfg = volume_control({
+  widget_text = {
+    on  = '  % 3d%% ',        -- three digits, fill with leading spaces
+    off = '󰖁',
+  },
+})
+
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
 editor = os.getenv("EDITOR") or "nvim"
@@ -148,11 +155,11 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = taglist_buttons
     }
 
-    s.sep = wibox.widget.separator {
+    s.csep = wibox.widget.separator {
       visible = false
     }
 
-    s.volume = volume_control({}).widget
+    s.volume = volumecfg.widget
 
     -- Create the wibox
     s.mywibox = awful.wibar({
@@ -169,28 +176,17 @@ awful.screen.connect_for_each_screen(function(s)
             s.mytaglist,
             s.mypromptbox,
         },
-        s.sep, -- Middle widget
+        s.csep, -- Middle widget
         { -- Right widgets
+        spacing = 10,
         layout = wibox.layout.fixed.horizontal,
         wibox.widget.systray(),
         s.volume,
         battery_widget {
           -- Show different prefixes when charging on AC
-          ac_prefix = {
-            { 25, "not charged" },
-            { 50, "1/4 charged" },
-            { 75, "2/4 charged" },
-            { 95, "3/4 charged" },
-            {100, "fully charged" },
-          },
-
+          ac_prefix = '󰂅 ',
           -- Show a visual indicator of charge level when on battery power
-          battery_prefix = {
-            { 25, "[#---] "},
-            { 50, "[##--] "},
-            { 75, "[###-] "},
-            {100, "[####] "},
-          }
+          battery_prefix = '󰁹 '
         },
         mytextclock,
       },
@@ -304,7 +300,10 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+awful.key({}, "XF86AudioRaiseVolume", function() volumecfg:up() end),
+    awful.key({}, "XF86AudioLowerVolume", function() volumecfg:down() end),
+    awful.key({}, "XF86AudioMute",        function() volumecfg:toggle() end)
 )
 
 clientkeys = gears.table.join(
