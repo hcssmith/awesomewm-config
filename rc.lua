@@ -15,6 +15,7 @@ local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 local battery_widget = require("battery-widget")
+local volume_control = require("volume-control")
 -- Enable hotkeys help widget for VIM and other apps
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
@@ -151,6 +152,8 @@ awful.screen.connect_for_each_screen(function(s)
       visible = false
     }
 
+    s.volume = volume_control({}).widget
+
     -- Create the wibox
     s.mywibox = awful.wibar({
       position = "top",
@@ -170,6 +173,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
         layout = wibox.layout.fixed.horizontal,
         wibox.widget.systray(),
+        s.volume,
         battery_widget {
           -- Show different prefixes when charging on AC
           ac_prefix = {
