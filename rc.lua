@@ -52,7 +52,7 @@ end
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. "xresources/theme.lua")
-beautiful.wallpaper = '/home/hcssmith/Pictures/Wallpapers/saber.jpg'
+beautiful.wallpaper = '/home/hcssmith/Pictures/Wallpapers/saber2.jpg'
 beautiful.useless_gap = 10
 
 volumecfg = volume_control({
@@ -63,7 +63,7 @@ volumecfg = volume_control({
 })
 
 -- This is used later as the default terminal and editor to run.
-terminal = "kitty"
+terminal = "nixGLIntel wezterm"
 editor = os.getenv("EDITOR") or "nvim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -149,10 +149,13 @@ awful.screen.connect_for_each_screen(function(s)
 	set_wallpaper(s)
 
 	-- Each screen has its own tag table.
-	awful.tag({ "nvim", "web", "term", "extra" }, s, awful.layout.layouts[1])
+	awful.tag({ "nvim", "web", "term", "extra", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
 	-- Create a promptbox for each screen
-	s.mypromptbox = awful.widget.prompt()
+	s.mypromptbox = awful.widget.prompt({
+
+		bg = beautiful.bg_normal .. "0",
+	})
 	-- Create an imagebox widget which will contain an icon indicating which layout we're using.
 	-- We need one layoutbox per screen.
 	-- Create a taglist widget
@@ -567,7 +570,8 @@ client.connect_signal("mouse::enter", function(c)
 	c:emit_signal("request::activate", "mouse_enter", { raise = false })
 end)
 
-client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+-- client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("focus", function(c) c.border_color = beautiful.border_normal end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 --
